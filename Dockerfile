@@ -1,4 +1,4 @@
-FROM prographerj/docker-centos7-java:latest
+FROM prographerj/centos7-java:latest
 MAINTAINER Prographer J<prographer.j@gmail.com>
 
 USER root
@@ -6,7 +6,7 @@ USER root
 #install dev tools
 RUN yum clean all; \
     rpm --rebuilddb; \
-    yum install -y initscripts curl which tar sudo openssh-server openssh-clients rsync
+    yum install -y initscripts curl which tar sudo rsync
 
 # update libselinux. see https://github.com/sequenceiq/hadoop-docker/issues/14
 RUN yum update -y libselinux
@@ -40,12 +40,6 @@ ADD yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 RUN $HADOOP_PREFIX/bin/hdfs namenode -format
 
 RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
-
-RUN sed  -i "/^[^#]*UsePAM/ s/.*/#&/"  /etc/ssh/sshd_config
-RUN echo "UsePAM no" >> /etc/ssh/sshd_config
-RUN echo "Port 22" >> /etc/ssh/sshd_config
-
-RUN service sshd start
 
 # Hdfs ports
 EXPOSE 50010 50020 50070 50075 50090 8020 9000
