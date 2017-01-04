@@ -12,7 +12,7 @@ hadoop: **2.7.3**
 
 ## Installation
 ```sh
-docker pull prographerj/centos7-java8:latest
+docker pull prographerj/centos7-hadoop:latest
 ```
 
 ## Running
