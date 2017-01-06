@@ -3,6 +3,8 @@ MAINTAINER Prographer J<prographer.j@gmail.com>
 
 USER root
 
+ARG HADOOP_VERSION=2.7.3
+
 #install dev tools
 RUN yum clean all; \
     rpm --rebuilddb; \
@@ -12,14 +14,20 @@ RUN yum clean all; \
 RUN yum update -y libselinux
 
 #Timezon change
-RUN /bin/cp -p /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+#RUN /bin/cp -p /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
-#passwordless ssh
+#ssh setting
+ADD config/ssh-config /root/.ssh/config
+RUN chmod 600 /root/.ssh/config
+RUN chown root:root /root/.ssh/config
+
+RUN echo "/usr/sbin/sshd" >> ~/.bashrc
+
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
 RUN cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 RUN /usr/bin/ssh-keygen -A
 
-RUN echo "/usr/sbin/sshd" >> ~/.bashrc
+
 
 # java
 RUN curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-linux-x64.rpm' -H 'Cookie: oraclelicense=accept-securebackup-cookie'
@@ -31,8 +39,8 @@ ENV PATH $PATH:$JAVA_HOME/bin
 RUN rm /usr/bin/java && ln -s $JAVA_HOME/bin/java /usr/bin/java
 
 # hadoop
-RUN curl -s http://apache.tt.co.kr/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz | tar -xz -C /usr/local/
-RUN cd /usr/local && ln -s ./hadoop-2.7.3 hadoop
+RUN curl -s http://apache.tt.co.kr/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz | tar -xz -C /usr/local/
+RUN cd /usr/local && ln -s ./hadoop-$HADOOP_VERSION hadoop
 RUN cd /usr/local/hadoop && mkdir -p logs
 RUN mkdir -p /home/hdfs/namenode
 RUN mkdir -p /home/hdfs/datanode
@@ -54,10 +62,6 @@ RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/java/default\nexport 
 RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_CONF_DIR/hadoop-env.sh
 
 #copy config
-ADD config/ssh-config /root/.ssh/config
-RUN chmod 600 /root/.ssh/config
-RUN chown root:root /root/.ssh/config
-
 ADD config/core-site.xml $HADOOP_PREFIX/etc/hadoop/core-site.xml
 ADD config/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD config/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
