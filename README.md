@@ -27,3 +27,7 @@ To simply run the container[demons]:
 ```sh
 docker run -i -t -d --name master prographerj/centos7-hadoop:latest /usr/local/hadoop/sbin/start-dfs.sh
 ```
+
+
+##TODO
+namenode format 에대한 처리 필요.

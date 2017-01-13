@@ -42,9 +42,6 @@ RUN rm /usr/bin/java && ln -s $JAVA_HOME/bin/java /usr/bin/java
 RUN curl -s http://apache.tt.co.kr/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz | tar -xz -C /usr/local/
 RUN cd /usr/local && ln -s ./hadoop-$HADOOP_VERSION hadoop
 RUN cd /usr/local/hadoop && mkdir -p logs
-RUN mkdir -p /home/hdfs/namenode
-RUN mkdir -p /home/hdfs/datanode
-RUN mkdir -p /home/hdfs/tmp
 
 ENV HADOOP_HOME=/usr/local/hadoop
 ENV HADOOP_PREFIX /usr/local/hadoop
@@ -67,9 +64,6 @@ ADD config/hdfs-site.xml $HADOOP_PREFIX/etc/hadoop/hdfs-site.xml
 ADD config/mapred-site.xml $HADOOP_PREFIX/etc/hadoop/mapred-site.xml
 ADD config/yarn-site.xml $HADOOP_PREFIX/etc/hadoop/yarn-site.xml
 ADD config/slaves $HADOOP_PREFIX/etc/hadoop/slaves
-
-#namenode format
-RUN $HADOOP_PREFIX/bin/hdfs namenode -format
 
 RUN chmod +x /usr/local/hadoop/etc/hadoop/*-env.sh
 

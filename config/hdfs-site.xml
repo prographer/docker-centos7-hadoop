@@ -30,4 +30,9 @@
         <name>dfs.datanode.data.dir</name>
         <value>/home/hdfs/datanode</value>
     </property>
+
+    <property>
+        <name>dfs.namenode.handler.count</name>
+        <value>100</value>
+    </property>
 </configuration>
